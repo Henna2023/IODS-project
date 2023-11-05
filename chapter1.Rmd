@@ -1,7 +1,11 @@
 
 # About the project
 
-*Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you should use R Markdown syntax.*
+I am very interested to learn R better as my current expertise is at an intro level. Also, a bit overwhelmed with all the different platforms, codes and functions in R. Hopefully, things get easier as I make progress with the course and maybe there are some similarities in the functionality of R with other tools that I am more familiar with. 
+
+The R for Health Data Science and the Exercise 1 provide quite a good learning tool given clear explanations and learning-by-doing approach. The first four chapters provide a good basics of using R, but I am particularly interested to make progress towards the more analytical functionality of R. 
+
+Link to Github: https://github.com/Henna2023/IODS-project
 
 ```{r}
 # This is a so-called "R chunk" where you can write R code.
