@@ -3,7 +3,7 @@
 
 I am very interested to learn R better as my current expertise is at an intro level. Also, a bit overwhelmed with all the different platforms, codes and functions in R. Hopefully, things get easier as I make progress with the course and maybe there are some similarities in the functionality of R with other tools that I am more familiar with. 
 
-The R for Health Data Science and the Exercise 1 provide quite a good learning tool given clear explanations and learning-by-doing approach. The first four chapters provide a good basics of using R, but I am particularly interested to make progress towards the more analytical functionality of R. 
+The R for Health Data Science and the Exercise 1 provide quite a good learning tool given clear explanations and learning-by-doing approach. The first four chapters provide a good basics of using R, but I am particularly interested to make progress towards more analytical work with R. 
 
 Link to Github: https://github.com/Henna2023/IODS-project
 
