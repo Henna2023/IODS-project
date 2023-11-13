@@ -59,3 +59,6 @@ learning2014 <- read.csv("learning2014.csv", sep = ",", header = TRUE)
 
 # Check dimensions
 dim(learning2014)
+str(learning2014)
+
+# Dimensions of data file 166 obs of 7 variables and structure of data looks as it should
