@@ -1,6 +1,6 @@
 ---
 title: "IODS course project"
-author: "Henna Karhapää"
+author: "Henna Karhapää "
 output:
   html_document:
     theme: cosmo
