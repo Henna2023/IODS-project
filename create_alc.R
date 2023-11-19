@@ -3,8 +3,8 @@ date()
 "Assignment 3 - Data Wrangling"
 
 # Read the data file
-mat <- read.table("C:/Users/henna/Desktop/IODS-project/studentmat.csv", sep = ";", header = T)
-por <- read.table("C:/Users/henna/Desktop/IODS-project/studentpor.csv", sep = ";", header = T)
+mat <- read.table("Henna2023/IODS-project/studentmat.csv", sep = ";", header = T)
+por <- read.table("Henna2023/IODS-project/IODS-project/studentpor.csv", sep = ";", header = T)
 
 # Looking at dimension and structure of datasets
 
