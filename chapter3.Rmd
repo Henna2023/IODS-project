@@ -2,23 +2,209 @@
 
 Each step of the assignment 3 is detailed below in the code section below. 
 
+Part 1: Reading and characterizing the data set
 
 ```{r}
 
+# Reading the data file from the url link 
+alc <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/alc.csv", sep = ",", header = T)
 
+# Looking at the column names of the data set
+colnames(alc)
+
+# The data set includes 370 observations from 35 variables. The data set has been build by combining two data sets that include different variables of student achievement in secondary education of two Portuguese schools as well as different attributes, such as grades, demographic, social and school related features. Data set also includes variables for alcohol use, including an indicator for high and low usage.
+
+library(ggplot2)
+library(tidyverse)
+library(readr)
+library(dplyr)
+
+
+# Using gather to draw a bar plot if each variable 
+gather(alc) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") + geom_bar()
+
+```
+
+
+Part 2: Analyzing the relationships between high/low alcohol consumption and some  variables in the data
+
+I have chosen four initial variables for the analysis: sex of the student (sex), number of school absences (absences), number of past class failures (failures), and quality of family relationships (famrel)
+
+  - Sex is used as a possible indicator for alcohol use with the assumption that        boys/young men may be more prone to use alcohol. There seems to be some             research showing that alcohol use of male students could be frequent.
+  
+  - Number of school absences is chosen as a variable as alcohol use could be           associated with problems in school leading to more absences. Using alcohol at a     young age could also be correlated with some irresponsible behavior which could     be related to absences.  
+  
+  - Failures in class is chosen with the hypothesis that students struggling in         school may be more likely to use alcohol. This may be similar to absences, but      there doesn't seem to be clear correlation of absences and failures.
+  
+  - Family relations could be an indicator of stability of home life for student.       Worse family relations could mean that the student spends more time out of the      home (getting in to trouble and possible using alcohol) and has less support to     deal with issues.
+
+
+
+```{r}
+library(tidyr); library(dplyr); library(ggplot2)
+
+# Looking at some characteristics of the chosen variables
+count(alc, sex)
+mean(alc$absences)
+mean(alc$failures)
+mean(alc$famrel)
+
+alc_male <- filter(alc, sex=="M")
+alc_female <- filter(alc, sex=="F")
+mean(alc_male$alc_use)
+mean(alc_female$alc_use)
+mean(alc_male$absences)
+mean(alc_female$absences)
+mean(alc_male$failures)
+mean(alc_female$failures)
+mean(alc_male$famrel)
+mean(alc_female$famrel)
+
+
+# Taking first a look at alcohol use by sex
+ggplot(alc,  aes(x = high_use)) + geom_bar() + facet_wrap("sex")
+
+# The graph shows that the share of high alcohol use is higher for male students compared to female students 
+
+# Looking at relation between alc_use and absences by sex
+ggplot(alc, aes(x = absences, y = alc_use)) + geom_point() + geom_smooth(method = "lm") + facet_wrap("sex") + ggtitle("Alcohol use and absences")
+
+# Based on visual assessment of the graph, there seems to be a positive relation between absences and alcohol use. The relation seems much stronger for male students.
+
+# Looking at relation between alc_use and failures by sex
+ggplot(alc, aes(x = failures, y = alc_use)) + geom_point() + geom_smooth(method = "lm") + facet_wrap("sex") + ggtitle("Alcohol use and failures")
+
+# Based on visual assessment of the graph, there seems to be a positive relation between failures in school and alcohol use.
+
+# Looking at relation between alc_use and famrel by sex
+ggplot(alc, aes(x = famrel, y = alc_use)) + geom_point() + geom_smooth(method = "lm") + facet_wrap("sex") + ggtitle("Alcohol use and family relations")
+
+# Based on the graph, there seems to be a negative relation between family relation and alcohol use, meaning that better family life corresponds to lower alcohol usage. the relation seems stronger for male students. 
+
+
+# Boxplots can be used to display and compare distributions. They visualize the 25th, 50th and 75th percentiles of the data and shows whether there are any outliers. 
+
+# Looking at boxplots of the variables and high use of alcohol 
+g1 <- ggplot(alc, aes(x = high_use, y = absences))
+g1 + geom_boxplot() + ylab("absences") + facet_wrap("sex") + ggtitle("High alcohol use and absences by sex")
+
+# Boxplot for absences shows that most observations are at the lower end but there are also some outliers (especially for female students) that are worth noticing
+
+g2 <- ggplot(alc, aes(x = high_use, y = failures))
+g2 + geom_boxplot() + ylab("failures") + facet_wrap("sex") + ggtitle("High alcohol use and failures by sex")
+
+# Boxplot for failures shows that there is a large concentration of observations in at zero and a small number of observations in higher values
+
+g3 <- ggplot(alc, aes(x = high_use, y = famrel))
+g3 + geom_boxplot() + ylab("family relations") + facet_wrap("sex") + ggtitle("High alcohol use and family relations by sex")
+
+# Boxplot shows that majority of observations show good family relations but there are also some outliers. There seems to be a meaningful difference in family relations between high and low alcohol use.
+
+# A histogram of absences, failures and family relations to further visualize the data
+g4 <- ggplot(alc, aes(x = absences)) 
+g4 + geom_bar()
+
+g5 <- ggplot(alc, aes(x = failures)) 
+g5 + geom_bar()
+
+g6 <- ggplot(alc, aes(x = famrel)) 
+g6 + geom_bar()
+
+```
+
+
+
+
+Part 3: the next section presents logistic regression analysis to statistically explore the relationship between the chosen variables and the binary high/low alcohol consumption variable.
+
+
+
+```{r}
+
+# Logistic model for high alcohol use with absences, failures, family relations and sex as the chosen variables
+m <- glm(high_use ~ absences + failures + famrel + sex, data = alc, family = "binomial")
+
+# Printing out a summary of the model
+summary(m)
+
+# Printing the coefficients of the model
+coef(m)
+
+# The summary of the model shows that absences and sex are highly statistically significant while also failures and family relations have relatively high significance. Higher absences and school failures are associated with high alcohol consumption. The model also shows that male students are more likely to use high amounts of alcohol compared to female students. Better family relations are associated with lower alcohol usage.
+
+
+# Coefficient of the model need to be transformed by taking exponents, which can be interpreted as odds ratios between a unit change in the corresponding explanatory variable. The model can be used to assess the probability of a student being a high alcohol user.
+
+# Computing odds ratios (OR)
+OR <- coef(m) %>% exp
+
+# Computing confidence intervals (CI)
+CI <- confint(m) %>% exp
+
+# Printing out the odds ratios with confidence intervals
+cbind(OR, CI)
+
+# The odds ratio for sex is the highest showing that the probability of a male student being high alcohol user is higher compared to female students. Odds ratios and their confidence intervals for absences and failures are above 1 which indicates that higher values in these variables increase the probability of a student being high alcohol user. On the other hand, odds ratio and the confidence interval for family relation is below 1 which indicates that higher value (better family relation) lowers the probability of a student being a high alcohol users. 
+
+# The model seems to be in line with the hypothesis presented above at the start of the assignment. 
+
+
+# Next, predictive power of the logistic regression model is assessed by making predictions with the model
+
+library(dplyr)
+
+# Using the function predict() for the probability of high_use
+probabilities <- predict(m, type = "response")
+
+# Adding the predicted probabilities to the data set 'alc'
+alc <- mutate(alc, probability = probabilities)
+
+# Using the probabilities to make a prediction of high_use
+alc <- mutate(alc, prediction = probability > 0.5)
+
+# Tabulating the target variable versus the predictions
+table(high_use = alc$high_use, prediction = alc$prediction)
+
+
+# The table of 2x2 cross tabulation of predictions versus the actual values shows that prediction of low use of alcohol is right 244 times and wrong 15 times. On the other hand, the prediction of high use of alcohol is correct 34 times while fails 77 times. Thus, the model seems better at predicting low usage than high usage. 
+
+# For further assessment of the model, a graphic visualizing for actual values and the predictions is produced
+
+library(dplyr); library(ggplot2)
+
+# initialize a plot of 'high_use' versus 'probability' in 'alc'
+g <- ggplot(alc, aes(x = probability, y = high_use))
+
+# define the geom as points and draw the plot
+g + geom_point()
+
+# tabulate the target variable versus the predictions
+table(high_use = alc$high_use, prediction = alc$prediction) %>% prop.table() %>% addmargins()
+
+# The table shows that the correct prediction of high alcohol use happens only about 30 % (0.0918/0.3) in the context of high use. This seems very low prediction power.
+
+# The prediction power of the model is compared to a case where probability of zero is assigned to high use. Similarly, comparison is done against a probability of one.
+
+# Defining a loss function 
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+
+# Loss function with probability set to zero, one and as identified in the model
+loss_func(class = alc$high_use, prob = 0)
+loss_func(class = alc$high_use, prob = 1)
+loss_func(class = alc$high_use, prob = alc$probability)
+
+# The loss function (mean prediction error) is lowest with the model compared to the alternative scenarios used for comparison. Thus the model seems better than a pure guessing strategy.
 
 ```
 
 
 
 ```{r}
+
 date()
-```
-
-
-
-```{r}
-
 
 ```
 
