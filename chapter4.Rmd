@@ -3,7 +3,7 @@
 
 ## Part 1 and 2: Creating and exploring the datafile 
 
-The Boston data includes different variables to analyze housing Values in the suburbs of Boston. These variables include crime rates, average number of rooms, distance form Boston employment centers, and accessibility to highways. The data set contains 506 observations from 14 variables.
+ 
 
 ```{r}
 
@@ -21,6 +21,7 @@ str(Boston)
 dim(Boston)
 colnames(Boston)
 
+# The Boston data includes different variables to analyze housing Values in the suburbs of Boston. These variables include crime rates, average number of rooms, distance form Boston employment centers, and accessibility to highways.The data set contains 506 observations from 14 variables. Most of the variables are numeric, but there are also some integers.
 
 
 ```
@@ -44,7 +45,9 @@ ggplot(Boston, aes(x = dis, y = medv)) + geom_point() + geom_smooth(method = "lm
 
 ggplot(Boston, aes(x = ptratio, y = medv)) + geom_point() + geom_smooth(method = "lm") + ggtitle("Housing values and pupil-teather ratio")
 
-ggplot(Boston, aes(x = lstat, y = medv)) + geom_point() + geom_smooth(method = "lm") + facet_wrap("chas") + ggtitle("HOusing values and lower status families per closeness to River")
+ggplot(Boston, aes(x = lstat, y = medv)) + geom_point() + geom_smooth(method = "lm") + facet_wrap("chas") + ggtitle("Housing values and lower status families per closeness to River")
+
+# The graphs showcase some examples of the relationships between housing values and the other variables. For example, there seems to be a positive relation between housing values and distance to employment centers and a negative relation between housing values and pupil-teacher ratio. Both relations seem fairly intuitive.
 
 
 # Plotting a matrix with ggpairs()
@@ -56,8 +59,12 @@ cor_matrix <- cor(Boston)
 cor_matrix
 corrplot(cor_matrix, method="circle", type = "upper", cl.pos = "b", tl.pos = "d")
 
+# The correlation plot shows a visual representation of correlations between the variables, with bigger bubble and a darker indicating high correlation in absolute terms. Also, the correlation matrix shows correlations of the different variables.
+
 # Showing summary of the variables
 summary(Boston)
+
+# Summary statistics show for each variables min and max values,mean and median values as well as the 1st and 3rd quantiles. One can observe that the variables have quite different scales and characteristics.
 
 ```
 
@@ -89,7 +96,7 @@ summary(boston_scaled$crim)
 bins <- quantile(boston_scaled$crim)
 bins
 
-# Creating a categorical variable 'crime'
+# Creating a categorical variable 'crime' by using the quantiles as the break points in the categorical variable 
 crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, levels = c("low", "med_low", "med_high", "high"))
 
 # Looking at the table of the new factor crime
@@ -110,10 +117,10 @@ n <- nrow(boston_scaled)
 # Choosing randomly 80% of the rows
 ind <- sample(n,  size = n * 0.8)
 
-# Creating the train set
+# Creating the train set that includes the randomly chosen 80 percent of rows
 train <- boston_scaled[ind,]
 
-# Creating the test set 
+# Creating the test set that includes the rest of the rows
 test <- boston_scaled[-ind,]
 
 # Saving the correct classes from test data
@@ -163,11 +170,9 @@ lda.pred <- predict(lda.fit, newdata = test)
 # Cross-tabulating the results
 table(correct = correct_classes, predicted = lda.pred$class)
 
-
+# The result shows that 74 of 102, meaning about 71 %, are predicted at the correct class (indicated by the range of the quantile)
 
 ```
-
-
 
 
 
@@ -224,7 +229,7 @@ km <- kmeans(boston_scaled, centers = 2)
 # Plotting the Boston dataset with clusters (looking at only selected variables for easier visualization)
 pairs(boston_scaled[c("rm", "age", "dis", "crim")], col = km$cluster)
 
-
+# The plots in red and black the separation of the data points to two different clusters. For some selected variables chosen, it shows that quite clear clustering around certain values. 
 
 ```
 

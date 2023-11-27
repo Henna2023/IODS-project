@@ -538,16 +538,16 @@ Hints:
 set.seed(123)
 
 # determine the number of clusters
-#k_max <- kmeans(Boston, centers = k)
+k_max <- 10
 
-#library(ggplot2)
+library(ggplot2)
 
 # calculate the total within sum of squares
-#twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
+twcss <- sapply(1:k_max, function(k){kmeans(Boston, k)$tot.withinss})
 
 
 # visualize the results
-#qplot(x = 1:k_max, y = twcss, geom = 'line')
+qplot(x = 1:k_max, y = twcss, geom = 'line')
 
 library(tidyverse) 
 library(cluster)    
