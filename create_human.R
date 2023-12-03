@@ -60,6 +60,7 @@ dim(hd_gii)
 # Saving the data set
 library(tidyverse)
 write.csv(hd_gii, "human.csv", row.names = FALSE)
+<<<<<<< HEAD
 
 
 
@@ -117,7 +118,6 @@ human <- human[1:155, ]
 
 # Now the rows representing the regions are excluded and the dataset includes 155 observations of 9 variables
 dim(human)
-
 
 
 
