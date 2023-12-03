@@ -2,7 +2,7 @@
 
 Each step of the assignment 3 is detailed below in the code section below. 
 
-Part 1: Reading and characterizing the data set
+Part 1: Reading and characterizing the data  set
 
 ```{r}
 

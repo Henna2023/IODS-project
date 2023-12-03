@@ -1,7 +1,7 @@
 # Chapter 4: Clustering and Classification
 
 
-## Part 1 and 2: Creating and exploring the datafile 
+## Part 1 and 2: Creating and  exploring the datafile 
 
  
 
@@ -238,5 +238,6 @@ pairs(boston_scaled[c("rm", "age", "dis", "crim")], col = km$cluster)
 ```{r}
 # End of Chapter 4
 date()
+
 
 ```
