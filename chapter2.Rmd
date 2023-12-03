@@ -1,12 +1,290 @@
-# Insert chapter 2 title here
+# Chapter 2: Regression and model validation
 
-*Describe the work you have done this week and summarize your learning.*
+Each step of the assignment 2 is detailed below in the code section below. 
 
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using.
+ 
 
 ```{r}
+# Part 1 of Assignment 2
+
+# Reading the data file from the url link 
+students2014 <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/learning2014.txt", sep = ",", header = T)
+
+# Checking the dimensions and structure of the dataset
+dim(students2014)
+str(students2014)
+
+#There are 166 observations of 7 variables (gender, age, attitude, deep, stra, surf and points) in the data set. 
+# - Gender is a character F (female) or M (male)
+# - Age and points are integers
+# - Attitude, deep, stra and surf are numbers 
+
+
+
+
+#Part 2 of Assingment 2
+
+# Access the gglot2 library
+library(ggplot2)
+
+# Taking a visual look at the data by plotting histograms of each variable except gender which is a character
+
+ggplot(students2014, aes(x = age)) +
+  geom_histogram(binwidth = 5) +
+  ggtitle("Histogram of age")
+  
+ggplot(students2014, aes(x = attitude)) +
+  geom_histogram(binwidth = 1) +
+  ggtitle("Histogram of attitude")
+
+ggplot(students2014, aes(x = deep)) +
+  geom_histogram(binwidth = 1) +
+  ggtitle("Histogram of deep")
+
+ggplot(students2014, aes(x = stra)) +
+  geom_histogram(binwidth = 1) +
+  ggtitle("Histogram of strategy")
+
+ggplot(students2014, aes(x = surf)) +
+  geom_histogram(binwidth = 1) +
+  ggtitle("Histogram of surface")
+
+ggplot(students2014, aes(x = points)) +
+  geom_histogram(binwidth = 5) +
+  ggtitle("Histogram of points")
+
+
+
+# Adding plots of each pair to look at the relation of different variables. Regression lines are added to the plots to visualize the relation. 
+
+ggplot(students2014, aes(x = age, y = points)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Age and points")
+
+ggplot(students2014, aes(x = age, y = attitude)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Age and attitude")
+
+ggplot(students2014, aes(x = age, y = stra)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Age and strategy")
+
+
+ggplot(students2014, aes(x = age, y = surf)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Age and surface")
+
+ggplot(students2014, aes(x = age, y = stra)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Age and strategy")
+
+ggplot(students2014, aes(x = attitude, y = stra)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Attitude and strategy")
+
+ggplot(students2014, aes(x = attitude, y = surf)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Attitude and surface")
+
+ggplot(students2014, aes(x = attitude, y = deep)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Attitude and deep")
+
+ggplot(students2014, aes(x = attitude, y = points)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Attitude and points")
+
+ggplot(students2014, aes(x = stra, y = surf)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Strategy and surface")
+
+ggplot(students2014, aes(x = stra, y = deep)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Strategy and deep")
+
+ggplot(students2014, aes(x = stra, y = points)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Strategy and points")
+
+ggplot(students2014, aes(x = surf, y = deep)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Surface and deep")
+
+ggplot(students2014, aes(x = surf, y = points)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Surface and points")
+
+ggplot(students2014, aes(x = deep, y = points)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("Deep and points")
+
+# Looking at the characteristics of the variables by taking their means, standard deviations, max values and min values
+
+print("Mean, standard deviation, min and max of age")
+mean(students2014$age)
+sd(students2014$age)
+max(students2014$age)
+min(students2014$age)
+
+print("Mean, standard deviation, min and max of attitude")
+mean(students2014$attitude)
+sd(students2014$attitude)
+max(students2014$attitude)
+min(students2014$attitude)
+
+print("Mean, standard deviation, max and min of deep")
+mean(students2014$deep)
+sd(students2014$deep)
+max(students2014$deep)
+min(students2014$deep)
+
+print("Mean, standard deviation, max and min of surface")
+mean(students2014$surf)
+sd(students2014$surf)
+max(students2014$surf)
+min(students2014$surf)
+
+print("Mean, standard deviation, max and min of strategy")
+mean(students2014$stra)
+sd(students2014$stra)
+max(students2014$stra)
+min(students2014$stra)
+
+print("Mean, standard deviation, max and min of points")
+mean(students2014$points)
+sd(students2014$points)
+max(students2014$points)
+min(students2014$points)
+
+
+# To analyze gender variable, I first check how many male and female students are included in the data set
+library(tidyverse)
+count(students2014, gender) 
+
+# The output shows that there are 110 female students and 56 male students. To check whether there are differences in the variables between gender, I create separate data sets for female and male students and look at the means.
+students_male <- filter(students2014, gender=="M")
+students_female <- filter(students2014, gender=="F")
+
+# Means of variables age, attitude, deep, surf, stra and poitns for males
+mean(students_male$age)
+mean(students_male$attitude)
+mean(students_male$deep)
+mean(students_male$surf)
+mean(students_male$stra)
+mean(students_male$points)
+
+# Means of variables age, attitude, deep, surf, stra and points for females
+mean(students_female$age)
+mean(students_female$attitude)
+mean(students_female$deep)
+mean(students_female$surf)
+mean(students_female$stra)
+mean(students_female$points)
+
+# The output shows that male students have on average somewhat higher exam points compared to females (23.5 vs 22.3). Male students are on average 2 years older (27 yrs vs 25 yrs), males have on average higher attitude, while the other variables for males and females are fairly close. 
+
+
+
+# Looking at correlations of variables (excluding gender which is not a number)
+students_cor <- students2014[-1]
+cor(students_cor)
+
+# The correlation matrix shows that for the most part correlation between the different variables is fairly low, between -0.2 and 0.2. There is a stronger positive correlation between points and attitude (0.44) and a negative correlation between deep and surf (-0.33)
+
+
+
+
+# Part 3 and 4 of Assignment 2
+
+# Regression model for exam points. 
+
+# As the first run of the regression model with 3 explanatory variables, I choose attitude, surface and strategy for the regression 
+
+model_points1 <- lm(points ~ attitude + stra + surf, data = students2014)
+
+#printing the output of the regression model
+model_points1
+summary(model_points1)
+
+# Results of the first regression shows that attitude is statistically significant in explaining exam results. Strategy has some significance (t statistic 1.6) while surface is not significant. Statistical significance is evaluated by looking at the t values and P(>|t|) of the regression output. 
+
+# R-squared for the model1 is 0.193. Thus the three chosen variables explain less than 20 percent of the variability of exam points.
+
+# The second regression takes out surf variable and adds age. The three explanatory variables are attitude, strategy and age.
+model_points2 <- lm(points ~ attitude + stra + age, data = students2014)
+
+#printing the output of the regression model
+model_points2
+summary(model_points2)
+
+
+# Results of the second regression are better compared to first. Attitude is still statistically significant with t value of 6.1. This means that the hypothesis that the coefficient for attitude is zero can be rejected with high confidence. Strategy and age have moderate t values and can be rejected to be zero at somewhat lower 90 percent confidence.
+
+# R-squared for the model2 is somewhat higher compared to the first regression at 0.204.
+
+# Based on the regression output, one point higher attitude score would be expected to correspond to about 3.5 higher exam point, one point higher strategy score would correspond to 1.0 higher exam points, and one additional year of age would correspond to lower exam points by 0.1, thus marginally.
+
+# Additionally, according to the regression results an average student for all the variables would be expected to have 22.7 exam points. An example student that performs one standard deviation above the mean across the variables would have an estimated exam points of 25.3. It should be noted this may not be a good illustration of a higher performing students as it assumes comparable high performance across all the three explanatory variables. An example student that performs one standard deviation below the mean across the variables would have an estimated exam points of 20.1.
+
+estimated_points = 10.895 + 3.481*mean(students2014$attitude) + 1.004*mean(students2014$stra) -0.088*mean(students2014$age)
+print(estimated_points)
+
+high_estimated_points = 10.895 + 3.481*(mean(students2014$attitude) + sd(students2014$attitude)) + 1.004*(mean(students2014$stra)+ sd(students2014$stra)) -0.088*(mean(students2014$age)+ sd(students2014$age)) 
+print(high_estimated_points)
+
+low_estimated_points = 10.895 + 3.481*(mean(students2014$attitude) - sd(students2014$attitude)) + 1.004*(mean(students2014$stra) - sd(students2014$stra)) -0.088*(mean(students2014$age) - sd(students2014$age)) 
+print(low_estimated_points)
+
+#Regressions for male and female students separately to assess whether there are meaningful differences
+students_male <- filter(students2014, gender=="M")
+students_female <- filter(students2014, gender=="F")
+
+#Regression for males
+model_points_male <- lm(points ~ attitude + stra + age, data = students_male)
+
+#printing the output of the regression model
+model_points_male
+summary(model_points_male)
+
+#Regression for males
+model_points_female <- lm(points ~ attitude + stra + age, data = students_female)
+
+#printing the output of the regression model
+model_points_female
+summary(model_points_female)
+
+
+# The separate regression models for do a better job in explaining variability of exam points for male students compared to female students (R-squared 0.21 vs 0.18). 
+
+
+#Part 5 of Assingment 2
+
+# Diagnostic test are done with different regression diagnostic plots: regression vs fitted values, normal QQ-plot and residuals vs leverage.
+
+plot(model_points2)
+
+# Residuals vs fitted values can be used to detect non-linearities, outliers or non-constant error variance. The scatter plot suggests that the residuals are scattered around 0 fairly randomly (linear relationship likely reasonable assumption) and there doesn't seem to be patterns suggesting changing error variance. However, there seems to be a few outliers with large negative residuals.
+
+# Normal QQ-plot is used to assess if the residuals are normally distributed. If this is the case, the data points of the QQ-plot should be fairly closely aligned with a straight 45 degree line. Low and to extent high values for residuals seem to be off the straight line, suggesting that there may be a problem of outliers or fat-tails. 
+
+# Residuals vs levarage can be used to checked whether there are influential cases as not all outliers necessarily impact the regression line significantly. There doesn't see to be residuals to that breach the Cook's line (indication that there would be leverage)
+
+
 date()
 ```
 
