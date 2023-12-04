@@ -1,6 +1,7 @@
 # Chapter 5: Dimensionality reduction techniques
 
 
+<<<<<<< HEAD
 ## Part 1:  
 
 ```{r}
@@ -19,9 +20,14 @@
 
 
 
+=======
+>>>>>>> 2eba0ed961830da763fca75e69b397a5e1e62e5c
 
 ```{r}
 date()
 ```
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 2eba0ed961830da763fca75e69b397a5e1e62e5c

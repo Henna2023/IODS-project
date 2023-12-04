@@ -60,3 +60,65 @@ dim(hd_gii)
 # Saving the data set
 library(tidyverse)
 write.csv(hd_gii, "human.csv", row.names = FALSE)
+<<<<<<< HEAD
+
+
+
+
+
+
+### Assingment 5 begins
+
+# Part 1. Looking at the data set
+
+# Loading dataset
+library(readr)
+human <- read_csv("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/human1.csv")
+
+str(human)
+summary(human)
+
+# The dataset contains 195 observations of 19 variables. 
+# Data includes human development index (HDI) and country HDI rankings as well as the different components that are used to calculate the index.
+# Variables include measures of life expectancy, education and standards of living. 
+# The data also has variables describing gender inequality (GII) which includes measures related to health, female empowerment and female labor market experiences compared to males.
+
+
+
+# Part 2. Excluding unneeded variables
+
+library(dplyr)
+
+# Columns to keep
+keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
+
+# Selecting only the 'keep' columns
+human <- select(human, one_of(keep))
+
+
+
+# Part 3. Excluding missing values
+
+# Filtering out all rows with NA values
+human <- filter(human, complete.cases(human)) 
+
+# At this point, the dataset includes 162 observations of 9 variables
+
+
+
+# Part 4. Remove the observations which relate to regions
+
+# Taking a look at the list of countries and regions
+human$Country
+
+# In the Country column, the last 7 rows represent regions. Let's exclude those rows from the dataset.
+
+# Choosing everything until the last 7 rows
+human <- human[1:155, ]
+
+# Now the rows representing the regions are excluded and the dataset includes 155 observations of 9 variables
+dim(human)
+
+
+
+

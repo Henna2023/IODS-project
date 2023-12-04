@@ -32,6 +32,7 @@ output:
 ```
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   
 ```{r child = "chapter3.Rmd"}
 # This will include Chapter 3 (that is updated in its own file) in the document.
@@ -40,11 +41,15 @@ output:
 =======
 ***
 >>>>>>> 6263dd31d375ba85afa8254fee3029054a11ba01
+=======
+***
+>>>>>>> 2eba0ed961830da763fca75e69b397a5e1e62e5c
 
 ***
   
 ```{r child = "chapter4.Rmd"}
 # This will include Chapter 4 (that is updated in its own file) in the document.
+<<<<<<< HEAD
 ```
 
 ***
@@ -59,3 +64,18 @@ output:
 >>>>>>> 6263dd31d375ba85afa8254fee3029054a11ba01
 (more chapters to be added similarly as we proceed with the course!)
 
+=======
+
+```
+***
+
+  
+```{r child = "chapter5.Rmd"}
+# This will include Chapter 5 (that is updated in its own file) in the document.
+
+```
+
+***
+(more chapters to be added similarly as we proceed with the course!)
+  
+>>>>>>> 2eba0ed961830da763fca75e69b397a5e1e62e5c

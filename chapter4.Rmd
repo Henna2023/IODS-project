@@ -243,4 +243,5 @@ pairs(boston_scaled[c("rm", "age", "dis", "crim")], col = km$cluster)
 # End of Chapter 4
 date()
 
+
 ```

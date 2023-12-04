@@ -2,11 +2,8 @@
 
 Each step of the assignment 3 is detailed below in the code section below. 
 
-<<<<<<< HEAD
+
 Part 1: Reading and characterizing the data  set
-=======
-Part 1: Reading and characterizing the data set
->>>>>>> 6263dd31d375ba85afa8254fee3029054a11ba01
 
 ```{r}
 
