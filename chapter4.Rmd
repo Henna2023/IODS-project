@@ -1,7 +1,11 @@
 # Chapter 4: Clustering and Classification
 
 
+<<<<<<< HEAD
 ## Part 1 and 2: Creating and  exploring the datafile 
+=======
+## Part 1 and 2: Creating and exploring the datafile 
+>>>>>>> 6263dd31d375ba85afa8254fee3029054a11ba01
 
  
 

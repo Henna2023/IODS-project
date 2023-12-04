@@ -1,0 +1,27 @@
+# Chapter 5: Dimensionality reduction techniques
+
+
+## Part 1:  
+
+```{r}
+
+
+```
+
+## otsikko
+
+
+```{r}
+
+```
+
+## otsikko
+
+
+
+
+```{r}
+date()
+```
+
+
