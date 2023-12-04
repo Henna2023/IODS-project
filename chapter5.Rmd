@@ -1,33 +1,136 @@
 # Chapter 5: Dimensionality reduction techniques
 
 
-<<<<<<< HEAD
-## Part 1:  
-
 ```{r}
+# Part 1. Graphical overview and summaries of the data
+
+
+library(dplyr)
+library(readr)
+library(corrplot)
+library(tibble)
+library(GGally)
+
+human <- read_csv("human.csv")
+keep <- c("Country", "Edu2.FM", "Labo.FM", "Life.Exp", "Edu.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
+human <- select(human, one_of(keep))
+dim(human)
+colnames(human)
+
+# Moving the country names to rownames
+human_ <- column_to_rownames(human, "Country")
+
+# Visualizing the 'human_' variables
+ggpairs(human_, progress=FALSE)
+
+colnames(human)
+
+# looking at summaries of the data set
+summary(human_)
+
+# Computing the correlation matrix and visualizing it with corrplot
+cor_matrix <- cor(human_) 
+cor_matrix
+corrplot(cor_matrix, method="circle", type = "upper", cl.pos = "b", tl.pos = "d")
 
 
 ```
 
-## otsikko
+
+## Part 2-4. principal component analysis (PCA) 
+
+Principal component analysis (PCA) is a technique for analyzing large datasets containing a high number of dimensions. PCA helps reduce the dimensionality of a dataset by linearly transforming the data into a new coordinate system where most of the variation in the data can be described with fewer dimensions.
+
+A biplot can be used to visualize connections between two representations of the same data. Here, the two principal components are vizualized for PC1 coordinate in x-axis and PC2 coordinate in y-axis. The arrows in the graph showcase connections between the original variables and the PC's. 
+
+The angle between the arrows can be interpreted as the correlation between the variables. The angle between a variable and a PC axis can be interpreted as the correlation between the two. The length of the arrows are proportional to the standard deviations of the variables.
+
 
 
 ```{r}
 
+library(tibble)
+library(readr)
+
+# perform principal component analysis on unscaled data
+
+pca_human <- prcomp(human_)
+
+# draw a biplot of the principal component representation and the original variables
+biplot(pca_human, choices = 1:2, col = c("blue", "red"), cex = c(0.8, 1))
+
+# create and print out a summary of pca_human
+s <- summary(pca_human)
+
+# rounded percentanges of variance captured by each PC
+pca_pr <- round(1*s$importance[2, ], digits = 5)
+
+pca_pr
+
+# For the unscaled data, the PCA output creates large weight to the first PC with close to no weight on the others.
+
+
+# Perform principal component analysis on scaled data
+
+human_std <- scale(human_)
+pca_human2 <- prcomp(human_std)
+
+# draw a biplot of the principal component representation and the original variables
+biplot(pca_human2, choices = 1:2, col = c("grey40", "deeppink2"), cex = c(0.8, 1))
+
+# create and print out a summary of pca_human
+s2 <- summary(pca_human2)
+
+# rounded percentanges of variance captured by each PC
+pca_pr2 <- round(1*s2$importance[2, ], digits = 5)
+
+pca_pr2 
+
+# PCA for scaled data shows that more half (54 %) of the variability in the data is included in the PC1 and around 16 percent in the PCA2.
+
+
+
 ```
 
-## otsikko
+## Part 5: Multiple Correspondence Analysis (MCA) on the tea data
+
+Multiple correspondence analysis (MCA) is a data analysis technique for categorical data, which can be used to detect and represent underlying structures in a data set. MCA can be considered to be the counterpart of PCA for categorical data.
+
+```{r}
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+tea_time <- read.csv("https://raw.githubusercontent.com/KimmoVehkalahti/Helsinki-Open-Data-Science/master/datasets/tea_time.csv", stringsAsFactors = TRUE)
+
+install.packages("htmltools")
+library(FactoMineR)
+
+# Looking at the tea dataset
+dim(tea_time)
+str(tea_time)
+view(tea_time)
+
+# The dataset includes categorical variables
+
+# multiple correspondence analysis
+mca <- MCA(tea_time, graph = FALSE)
+
+# summary of the model
+mca
+
+# visualize MCA
+plot(mca, invisible=c("ind"), graph.type = "classic")
 
 
 
-=======
->>>>>>> 2eba0ed961830da763fca75e69b397a5e1e62e5c
+# The dataset includes 300 observation of 36 variables.
+
+
+```
+
+
 
 ```{r}
 date()
 ```
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 2eba0ed961830da763fca75e69b397a5e1e62e5c
