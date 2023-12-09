@@ -1,0 +1,20 @@
+# Chapter 6: Analysis of longitudinal data
+
+```{r}
+date()
+```
+
+## otsikko
+
+
+```{r}
+date()
+```
+
+
+## otsikko 
+
+
+```{r}
+date()
+```
