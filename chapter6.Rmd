@@ -1,8 +1,138 @@
 # Chapter 6: Analysis of longitudinal data
 
+## Implementing the analyses of Chapter 8 of MABS, using the RATS data
+
+```{r}
+
+# Getting the data set ready
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+RATS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/master/Examples/data/rats.txt", sep = "\t", header = T)
+RATS$ID <- factor(RATS$ID)
+RATS$Group <- factor(RATS$Group)
+RATSL <- pivot_longer(RATS, cols = -c(ID, Group), 
+                      names_to = "WD",
+                      values_to = "Weight") %>% 
+  mutate(Time = as.integer(substr(WD,3,4))) %>%
+  arrange(Time)
+
+names(RATSL)
+
+# Drawing a plot with `Time` on the x-axis and `Weight` on the y-axis
+
+ggplot(RATSL, aes(x = Time, y = Weight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(RATSL$Weight), max(RATSL$Weight)))
+
+```
+
+```{r}
+
+# Redoing the graph with standardized data
+RATSL1 <- RATSL %>%
+  group_by(ID) %>%
+  mutate(stdweight = (Weight - mean(Weight))/sd(Weight) ) %>%
+  ungroup()
+
+summary(RATSL1)
+
+ggplot(RATSL1, aes(x = Time, y = stdweight, linetype = ID)) +
+  geom_line() +
+  scale_linetype_manual(values = rep(1:10, times=4)) +
+  facet_grid(. ~ Group, labeller = label_both) +
+  theme(legend.position = "none") + 
+  scale_y_continuous(limits = c(min(RATSL1$stdweight), max(RATSL1$stdweight)))
+
+
+
+```
+
+
+```{r}
+# Creating a summary graphs for non-standardized and standardized data with mean and standard error of weight by Group and Time
+
+# Non-standardized
+n <- 16
+RATSS <- RATSL %>%
+  group_by(Group, Time) %>%
+  summarise( mean = mean(Weight), se = sd(Weight)/n^0.5 ) %>%
+  ungroup()
+
+# Plotting the mean profiles
+library(ggplot2)
+ggplot(RATSS, aes(x = Time, y = mean, linetype = Group, shape = Group)) +
+  geom_line() +
+  scale_linetype_manual(values = c(1,2,3)) +
+  geom_point(size=3) +
+  scale_shape_manual(values = c(1,2,3)) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, linetype="1"), width=0.3) +
+  theme(legend.position = c(0.8,0.8)) +
+  scale_y_continuous(name = "mean(weight) +/- se(weight)")
+
+
+# Standardized
+n <- 16
+RATSS1 <- RATSL1 %>%
+  group_by(Group, Time) %>%
+  summarise( mean = mean(stdweight), se = sd(stdweight)/n^0.5 ) %>%
+  ungroup()
+
+# Plotting the mean profiles
+ggplot(RATSS1, aes(x = Time, y = mean, linetype = Group, shape = Group)) +
+  geom_line() +
+  scale_linetype_manual(values = c(1,2,3)) +
+  geom_point(size=3) +
+  scale_shape_manual(values = c(1,2,3)) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, linetype="1"), width=0.3) +
+  theme(legend.position = c(0.8,0.8)) +
+  scale_y_continuous(name = "mean(weight) +/- se(weight)")
+
+```
+
+
+```{r}
+# Looking for an outlier
+
+# Create a summary data by group and ID with mean as the summary variable (ignoring baseline Time 1)
+RATSLS <- RATSL1 %>%
+  filter(Time > 1) %>%
+  group_by(Group, ID) %>%
+  summarise( mean=mean(stdweight) ) %>%
+  ungroup()
+
+# Glimpse the data
+glimpse(RATSLS)
+
+# Drawing a boxplot of the mean versus group
+ggplot(RATSLS, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(weight)")
+
+# Excluding the outliers
+RATSLS1 <- RATSLS %>%
+  filter(mean > 0.02)
+
+# Drawing a boxplot without the outlier
+ggplot(RATSLS1, aes(x = Group, y = mean)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
+  scale_y_continuous(name = "mean(weight)")
+
+
+```
+
+
+
 ```{r}
 date()
 ```
+
 
 ## otsikko
 
@@ -10,6 +140,7 @@ date()
 ```{r}
 date()
 ```
+
 
 
 ## otsikko 
