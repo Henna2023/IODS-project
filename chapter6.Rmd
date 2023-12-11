@@ -260,6 +260,8 @@ names(BPRS)
 glimpse(BPRS)
 summary(BPRS)
 
+# BPRS includes data for 40 male subjects that were randomly assigned to one of two treatment groups and each subject was rated on the brief psychiatric rating scale (BPRS) measured before treatment began (week 0) and then at weekly intervals for eight weeks. BPRS data set includes 40 observations of 11 variables. The focus of the study presence of schizophrenia.
+
 # In BPRS categorical variables include treatment and subject
 BPRS$treatment <- factor(BPRS$treatment)
 BPRS$subject <- factor(BPRS$subject)
@@ -273,6 +275,8 @@ BPRSL <-  BPRSL %>%
 
 glimpse(BPRSL)
 
+# BPRSL long form data set includes 360 observations of five variables: treatment, subject, weeks, bprs and week.
+
 ```
 ```{r}
 # Drawing a plot to visualize the data
@@ -285,12 +289,13 @@ ggplot(BPRSL, aes(x = week, y = bprs, linetype = subject)) +
   theme(legend.position = "none") + 
   scale_y_continuous(limits = c(min(BPRSL$bprs), max(BPRSL$bprs)))
 
-
+# The graphs show development of the bprs measures for the subjects in the two treatment groups over the course of the 8 week study. There seems to be a downward projection in the data for both groups, indicating an improvement in the observed measurements. While there may be some differences in the average levels and changes between the treatment groups, it is difficult to provide a clear assessment solely be visual evaluation of the data. 
 
 ```
 
 
 ```{r}
+# This section fits a linear regression model to the BRPSL data set
 
 # Linear regression model BPRS_reg
 BPRS_reg <- lm(bprs ~ week + treatment, data = BPRSL)
@@ -298,11 +303,12 @@ BPRS_reg <- lm(bprs ~ week + treatment, data = BPRSL)
 # print out a summary of the model
 summary(BPRS_reg)
 
-# Commentary ...
+# The output of the regression model shows that the intercept and the time coefficient are statistically significant at very high confidence. However, the treatment group variable has a low t statistic, indicating that there is not a clear statistical difference between the treatment groups. 
 ```
 ```{r}
 
-# The Random Intercept Model
+# Next, the Random Intercept Model is performed for further evaluation. The model adds possible heterogeneity in the intercepts of the individuals’ regression lines. 
+
 library(lme4)
 
 # Creating a random intercept model
@@ -311,34 +317,43 @@ BPRS_ref <- lmer(bprs ~ treatment + week + (1 | subject), data = BPRSL, REML = F
 # Print the summary of the model
 summary(BPRS_ref)
 
-# Commentary ...
+# Also the random intercept model suggests that the differences between the treatment groups are not significant given the low t value for the treatment varible.
+
+
 ```
 
 ```{r}
-# Random Intercept and Random Slope Model
+# This section performs the Random Intercept and Random Slope Model.Fitting a random intercept and random slope model allows the linear regression fits for each individual to differ in intercept but also in slope. 
+
 
 BPRS_ref1 <- lmer(bprs ~ week + treatment + (week | subject), data = BPRSL, REML = FALSE)
 
 # Printing a summary of the model
 summary(BPRS_ref1)
 
-# perform an ANOVA test on the two models
+# Still, no clear evidence for the relevance of the treatment group for the outcome of the study. 
+
+# An ANOVA test is performed on the two models
 anova(BPRS_ref1, BPRS_ref)
 
-# Commentary ...
+# Lower AIC indicates better fit, thus supporting ref1 model. BIC indicates the balance between fir and complexity, which prefers ref model. Higher Loglik is better, thus supports ref model. Lower deviance supports ref1 model. Thus, the assessment don't provide clear support for one of the models. Additionally, the differences between the indicators are small.
 
 ```
 
 ```{r}
-# Random Intercept and Random Slope Model with interaction
+# Random Intercept and Random Slope Model with interaction. The model is similar as in the previous section but includes an interaction with week and treatment.
 
 BPRS_ref2 <- lmer(bprs ~ week + treatment + week*treatment + (week | subject), data = BPRSL, REML = FALSE)
 
 # print a summary of the model
 summary(BPRS_ref2)
 
-# perform an ANOVA test on the two models
+# The output of  the model suggest a somewhat higher absolute t value for the treatment group effect. Additionally, the week-treatment interaction term has a t value of 1.8, suggesting statistical significance.
+
+# Performing an ANOVA test on the two models
 anova(BPRS_ref2, BPRS_ref1)
+
+# ANOVA tests provides some support that the ref2 model performs better, but the differences are quite small.
 
 # Create a vector of the fitted values
 Fitted <- fitted(BPRS_ref2)
@@ -366,7 +381,7 @@ ggplot(BPRSL, aes(x = week, y = fitted, linetype = subject)) +
   theme(legend.position = "none") + 
   scale_y_continuous(name = "Fitted bprs", limits = c(min(BPRSL$bprs), max(BPRSL$bprs)))
 
-# Commentary ...
+# The last graphs compares the observed data and fitted values with the ref2 model.
 
 ```
 
