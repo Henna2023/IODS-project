@@ -15,8 +15,12 @@ RATS <- read.table("https://raw.githubusercontent.com/KimmoVehkalahti/MABS/maste
 dim(RATS)
 str(RATS)
 names(RATS)
-glimpse(RATS)
 summary(RATS)
+
+# RATS includes data from a nutrition study conducted in three groups of rats. The three groups were put on different diets. Each rat’s body weight (grams) was recorded repeatedly (approximately weekly, except in week seven when two recordings were taken). The study time period was 9 weeks. 
+
+# RATS data set includes 16 observations of 13 variables. There are 16 rats in the study represented by IDs.They are divided in to three groups. Group1 has 8 rats and Group2 and Group3 4 rats each. Rest of the data includes the weight measures for the from day 1 to day 64 at approximately weekly intervals.
+
 
 # Getting data in right form
 RATS$ID <- factor(RATS$ID)
@@ -27,7 +31,12 @@ RATSL <- pivot_longer(RATS, cols = -c(ID, Group),
   mutate(Time = as.integer(substr(WD,3,4))) %>%
   arrange(Time)
 
+dim(RATSL)
 names(RATSL)
+summary(RATSL)
+
+# RATSL includes the data set in a long form with 176 observations of 5 variables: ID, Group, WD, Weight and Time. The long form stacks all weight observations in to one column "Weight" with the other columns enabling tracking of each group, ID and date.
+
 
 # Drawing a plot with `Time` on the x-axis and `Weight` on the y-axis
 
@@ -38,17 +47,27 @@ ggplot(RATSL, aes(x = Time, y = Weight, linetype = ID)) +
   theme(legend.position = "none") + 
   scale_y_continuous(limits = c(min(RATSL$Weight), max(RATSL$Weight)))
 
+# The graphs show progression of weights of the individual rats in the three study groups. The data shows an upward trend for the rats in all groups, indicating that all rats are gaining weights during the 9 week study. Weights of the group 1 are much lower compared to the other groups during the whole period. The graphs also indicate that there may be some outliers in the data set, especially in the group 2. 
+
+
 ```
 
 ```{r}
 
-# Redoing the graph with standardized data
+# Redoing the graph with standardized data. This will help make comparing the weight gain of the different groups somewhat easier.
+
+# Standardization is done by subtracting the mean weight of individual rats from the observed weight and dividing that by standard deviation of weight data for that rat. 
+
 RATSL1 <- RATSL %>%
   group_by(ID) %>%
   mutate(stdweight = (Weight - mean(Weight))/sd(Weight) ) %>%
   ungroup()
 
 summary(RATSL1)
+
+# Data set RATSL1 includes an additional column for the standardized weight measure (stdweight)
+
+# Similar graph as in the previous section is done for standardized weight.
 
 ggplot(RATSL1, aes(x = Time, y = stdweight, linetype = ID)) +
   geom_line() +
@@ -57,16 +76,18 @@ ggplot(RATSL1, aes(x = Time, y = stdweight, linetype = ID)) +
   theme(legend.position = "none") + 
   scale_y_continuous(limits = c(min(RATSL1$stdweight), max(RATSL1$stdweight)))
 
-
+# The standardized data shows quite similar upward progression for all groups. It is difficult to assess whether there are meaningful differences between the groups purely through visual observation.
 
 ```
 
 
 ```{r}
-# Creating a summary graphs for non-standardized and standardized data with mean and standard error of weight by Group and Time
+# This section creates summary graphs for non-standardized and standardized data with mean and standard error of weight by Group and Time. 
+
+# Graphs show average (mean) profiles for each study group along at each time point with variation showcased by the standard error of mean.
 
 # Non-standardized
-n <- 16
+n <- 8
 RATSS <- RATSL %>%
   group_by(Group, Time) %>%
   summarise( mean = mean(Weight), se = sd(Weight)/n^0.5 ) %>%
@@ -83,9 +104,10 @@ ggplot(RATSS, aes(x = Time, y = mean, linetype = Group, shape = Group)) +
   theme(legend.position = c(0.8,0.8)) +
   scale_y_continuous(name = "mean(weight) +/- se(weight)")
 
+# The graph for the non-standardized data shows the upward trend of each group. There are clear differences in the levels (mean weights) between the groups, as noted before. 
 
-# Standardized
-n <- 16
+# Same exercise is done for standardized data
+n <- 8
 RATSS1 <- RATSL1 %>%
   group_by(Group, Time) %>%
   summarise( mean = mean(stdweight), se = sd(stdweight)/n^0.5 ) %>%
@@ -101,13 +123,15 @@ ggplot(RATSS1, aes(x = Time, y = mean, linetype = Group, shape = Group)) +
   theme(legend.position = c(0.8,0.8)) +
   scale_y_continuous(name = "mean(weight) +/- se(weight)")
 
+# Standardized data shows that the groups develop during the study period in fairly similar way with similar upward trend. There is somewhat more variation in groups 2 and 3, potentially due to the fact that there are less rats included in those groups and thus one rat may swing the mean a bit more from observation to observation.
+
 ```
 
 
 ```{r}
-# Looking for an outlier in standardized data
+# Next sections looks for an outlier. FIrst, the examination is done for standardized data set.
 
-# Create a summary data by group and ID with mean as the summary variable (ignoring baseline Time 1)
+# Creating a summary data by group and ID with mean as the summary variable (ignoring baseline Time 1)
 RATSLS <- RATSL1 %>%
   filter(Time > 1) %>%
   group_by(Group, ID) %>%
@@ -117,21 +141,30 @@ RATSLS <- RATSL1 %>%
 # Glimpse the data
 glimpse(RATSLS)
 
+# This data set includes 16 rows and 3 columns representing the group, ID and mean standardized weight by group and ID.
+
 # Drawing a boxplot of the mean versus group
 ggplot(RATSLS, aes(x = Group, y = mean)) +
   geom_boxplot() +
   stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
   scale_y_continuous(name = "mean(weight)")
 
+# The graph shows that there are potential outliers in groups 1 and 3. However, the outlier is excluded only from group 1 given small number of data points in group 3. 
+
 # Excluding the outliers
 RATSLS1 <- RATSLS %>%
-  filter(mean > 0.02)
+  filter(mean > 0.0)
 
-# Drawing a boxplot without the outlier
+# Redrawing a boxplot without the outlier
 ggplot(RATSLS1, aes(x = Group, y = mean)) +
   geom_boxplot() +
   stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
-  scale_y_continuous(name = "mean(weight)")
+  scale_y_continuous(name = "standardized mean(weight)")
+
+# Without the outlier, the "box" for group 1 is somewhat small showing that the remaining data points are closer together but the mean does not seem meaningfully different.
+
+# Both graphs suggest that there may be a difference between the groups as the means and the box ranges don't overlap much.
+
 
 
 ```
@@ -158,6 +191,8 @@ ggplot(RATSLS_, aes(x = Group, y = mean)) +
   stat_summary(fun = "mean", geom = "point", shape=23, size=4, fill = "white") +
   scale_y_continuous(name = "mean(weight)")
 
+# Visual examination suggests that there is an outlier in group 2. 
+
 # Excluding the outliers
 RATSLS1_ <- RATSLS_ %>%
   filter(mean < 550)
@@ -173,28 +208,40 @@ ggplot(RATSLS1_, aes(x = Group, y = mean)) +
 
 
 ```{r}
-# Performing a T test and Anova 
+# This section performs a T test and an analysis with Anova 
+
+# The graphs provided mixed signals of whether there differences in the three groups. A more formal test for the difference is done first with a t-test to assess any difference between the groups and to calculate a confidence interval for this difference. I will use the standardized data without excluding the outlier created in the previous exercise. 
 
 library(dplyr); library(tidyr)
 
 # Performing t test reguires that there are two groups that are compared. Thus, t test is performed for group 1 against group 2+3
-RATSLS2 <- RATSLS_ %>% mutate(GroupT = c(1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2))
+RATSLS2 <- RATSLS %>% mutate(GroupT = c(1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2))
 glimpse(RATSLS2)
 
 # t-test
 t.test(mean ~ GroupT, data = RATSLS2, var.equal = TRUE)
+
+# The t-test indicates a lack of a difference difference between the groups (fairly low t statistic and p-value above 0.4). Also, the 95% confidence interval is wide and includes the zero, suggesting a similar conclusion.
+
+
+# Baseline measurements of the outcome variable in a longitudinal study can often be correlated with the summary measure. Including baseline in the analysis can improve the precision when used as a covariate in an analysis of covariance.
 
 # Adding the baseline from the original data as a new variable to the summary data
 RATSLS3 <- RATSLS_ %>%
   mutate(baseline = RATS$WD1)
 glimpse(RATSLS3)
 
-# Fiting the linear model with the mean as the response 
+# Fitting a linear model with the mean as the response 
 fit <- lm(mean ~ baseline + Group, data = RATSLS3)
 
-# Compute the analysis of variance table for the fitted model with anova()
+# Printing the model output
+summary(fit)
+
+
+# Computing the analysis of variance table for the fitted model with anova()
 anova(fit)
 
+# The baseline is strongly related to the values observed during the study, but there is no clear evidence evidence of a group difference even after conditioning on the baseline value.
 
 ```
 
