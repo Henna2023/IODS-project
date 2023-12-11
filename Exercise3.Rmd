@@ -28,8 +28,8 @@ One or more extra packages (in addition to `tidyverse`) will be needed below.
 # Select (with mouse or arrow keys) the install.packages("...") and
 # run it (by Ctrl+Enter / Cmd+Enter):
 
-# install.packages("boot")
-# install.packages("readr")
+install.packages("boot")
+install.packages("readr")
 ```
 
 
